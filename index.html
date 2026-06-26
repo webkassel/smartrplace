@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO-Optimierer – Smartrplace</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Arial&display=swap');
+  :root{
+    --green-dark:#0f4c2a;--green-mid:#1a7a43;--green-light:#e6f4ec;--green-accent:#2dbd6e;
+    --amber:#f59e0b;--amber-light:#fef3c7;--amber-ink:#92400e;
+    --red:#dc2626;--red-light:#fee2e2;
+    --ink:#111827;--ink-mid:#374151;--ink-muted:#6b7280;--rule:#e5e7eb;
+    --bg:#f9fafb;--white:#fff;--mono:'DM Mono',monospace;--sans:'Inter',system-ui,sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;font-size:14px;}
+  .page{max-width:900px;margin:0 auto;padding:40px 36px 64px;background:var(--white);min-height:100vh;}
+
+  .header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;
+    padding-bottom:22px;border-bottom:3px solid var(--green-mid);margin-bottom:22px;flex-wrap:wrap;}
+  .eyebrow{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--green-mid);margin-bottom:8px;}
+  .header h1{font-size:23px;font-weight:700;color:var(--green-dark);line-height:1.25;}
+  .header .sub{font-size:13px;color:var(--ink-muted);margin-top:5px;}
+  .hint{font-size:12px;color:var(--ink-muted);background:var(--green-light);border-radius:6px;
+    padding:8px 12px;margin-bottom:22px;border-left:3px solid var(--green-accent);}
+  .hint b{color:var(--green-dark);font-weight:600;}
+
+  /* AREA NAV */
+  .areas{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+  .area-btn{font-family:var(--mono);font-size:11px;letter-spacing:.04em;border:1px solid var(--rule);
+    background:var(--white);color:var(--ink-mid);padding:8px 14px;border-radius:7px;cursor:pointer;
+    display:flex;align-items:center;gap:7px;transition:all .15s;}
+  .area-btn .num{width:17px;height:17px;border-radius:50%;background:#eef0f2;color:var(--ink-muted);
+    font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:600;}
+  .area-btn:hover{border-color:var(--green-accent);}
+  .area-btn.active{background:var(--green-dark);color:#fff;border-color:var(--green-dark);}
+  .area-btn.active .num{background:var(--green-accent);color:#fff;}
+  .area-btn.soon{opacity:.7;}
+  .area-btn .badge{font-size:9px;background:var(--amber-light);color:var(--amber-ink);
+    padding:1px 6px;border-radius:10px;letter-spacing:0;}
+
+  /* PAGE TABS */
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--rule);margin-bottom:22px;flex-wrap:wrap;}
+  .tab{font-size:13px;font-weight:500;color:var(--ink-muted);background:none;border:none;cursor:pointer;
+    padding:10px 14px;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;}
+  .tab:hover{color:var(--green-dark);}
+  .tab.active{color:var(--green-dark);font-weight:600;border-bottom-color:var(--green-mid);}
+
+  /* SERP PREVIEW */
+  .serp-label{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-muted);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .serp-label::after{content:'';flex:1;height:1px;background:var(--rule);}
+  .serp{border:1px solid var(--rule);border-radius:10px;padding:18px 20px;background:#fff;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:6px;}
+  .serp-url-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+  .serp-favi{width:24px;height:24px;border-radius:50%;background:var(--green-light);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .serp-favi span{width:11px;height:11px;border-radius:3px;background:var(--green-mid);display:block;}
+  .serp-site{font-size:12px;color:#202124;line-height:1.2;}
+  .serp-site .u{font-size:12px;color:#5f6368;}
+  .serp-title{font-size:20px;line-height:1.3;color:#1a0dab;font-weight:400;margin:2px 0 3px;
+    cursor:pointer;display:inline-block;}
+  .serp-title:hover{text-decoration:underline;}
+  .serp-desc{font-size:13.5px;line-height:1.58;color:#4d5156;}
+  .serp-desc .trunc,.serp-title .trunc{color:#9aa0a6;}
+  .hl{background:#fff3cd;border-radius:2px;padding:0 1px;}
+
+  /* H1 ON-PAGE PREVIEW (grüner Hero wie auf der echten Seite) */
+  .h1prev{border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin-bottom:6px;
+    background:linear-gradient(135deg,#0f4c2a 0%,#1a7a43 60%,#176b3b 100%);
+    color:#fff;padding:26px 24px 24px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+  .h1prev-crumb{font-size:12px;color:rgba(255,255,255,.72);margin-bottom:14px;letter-spacing:.01em;}
+  .h1prev-h1{font-size:30px;line-height:1.18;font-weight:700;letter-spacing:.01em;
+    text-transform:uppercase;}
+  .h1prev-sub{font-size:13px;font-weight:600;letter-spacing:.08em;color:rgba(255,255,255,.82);margin-top:8px;}
+  @media (max-width:620px){ .h1prev-h1{font-size:23px;} }
+
+  /* H2 OUTLINE PREVIEW */
+  .outline{border:1px solid var(--rule);border-radius:10px;padding:16px 18px;background:#fff;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:6px;}
+  .outline-h1{font-size:15px;font-weight:700;color:var(--green-dark);display:flex;align-items:center;
+    gap:9px;padding-bottom:11px;border-bottom:1px solid var(--rule);margin-bottom:11px;line-height:1.35;}
+  .outline .lvl{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em;
+    background:var(--green-dark);color:#fff;padding:2px 6px;border-radius:4px;flex-shrink:0;}
+  .outline-h2s{display:flex;flex-direction:column;gap:7px;}
+  .h2item{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--ink-mid);
+    padding:6px 10px;border-radius:7px;background:var(--bg);}
+  .h2item.warn{background:var(--amber-light);}
+  .h2bar{width:3px;align-self:stretch;min-height:16px;border-radius:2px;background:var(--green-accent);flex-shrink:0;}
+  .h2item.warn .h2bar{background:var(--amber);}
+  .h2txt{flex:1;line-height:1.4;}
+  .h2badge{font-family:var(--mono);font-size:9.5px;letter-spacing:.03em;padding:2px 7px;border-radius:10px;
+    white-space:nowrap;flex-shrink:0;}
+  .h2badge.bad{background:#fde2e2;color:var(--red);}
+  .h2badge.good{background:var(--green-mid);color:#fff;}
+  .h2badge.warn{background:#fff;border:1px dashed var(--amber);color:var(--amber-ink);}
+
+  /* H2 COUNT SUMMARY */
+  .h2count{font-family:var(--mono);font-size:13px;color:var(--ink-mid);margin-bottom:12px;
+    display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+  .h2count .n{font-size:16px;font-weight:600;color:var(--ink);}
+  .h2count .n.good{color:var(--green-mid);}
+  .h2count .arrow{color:var(--ink-muted);}
+  .h2count-note{font-family:var(--sans);font-size:12px;color:var(--ink-muted);}
+
+  /* EDITOR */
+  .editor{margin-top:24px;border:1px solid var(--rule);border-radius:10px;overflow:hidden;}
+  .ed-head{background:var(--green-light);padding:11px 16px;font-size:13px;font-weight:600;
+    color:var(--green-dark);border-bottom:1px solid var(--rule);display:flex;align-items:center;
+    justify-content:space-between;gap:10px;flex-wrap:wrap;}
+  .ed-modes{display:flex;gap:6px;}
+  .mode-btn{font-size:11px;font-family:var(--mono);border:1px solid var(--rule);background:#fff;
+    color:var(--ink-mid);padding:4px 11px;border-radius:6px;cursor:pointer;transition:all .15s;}
+  .mode-btn:hover{border-color:var(--green-accent);}
+  .mode-btn.active{background:var(--green-mid);color:#fff;border-color:var(--green-mid);}
+  .mode-btn:disabled{opacity:.4;cursor:not-allowed;}
+  .ed-body{padding:16px;}
+  .ed-input{width:100%;font-family:var(--mono);font-size:14px;color:var(--ink);
+    border:1.5px solid var(--rule);border-radius:7px;padding:11px 13px;line-height:1.5;resize:vertical;}
+  .ed-input:focus{outline:none;border-color:var(--green-accent);box-shadow:0 0 0 3px rgba(45,189,110,.15);}
+
+  .meter{display:flex;align-items:center;gap:12px;margin-top:12px;}
+  .meter .bar{position:relative;flex:1;height:9px;background:#eef0f2;border-radius:5px;overflow:hidden;}
+  .meter .ideal{position:absolute;top:0;bottom:0;background:rgba(45,189,110,.22);}
+  .meter .fill{position:absolute;top:0;bottom:0;left:0;border-radius:5px;transition:width .15s,background .15s;}
+  .meter .fill.warn{background:var(--amber);}
+  .meter .fill.good{background:var(--green-accent);}
+  .meter .fill.bad{background:var(--red);}
+  .meter .read{font-family:var(--mono);font-size:12px;white-space:nowrap;min-width:150px;text-align:right;}
+  .read .n{font-weight:600;font-size:13px;}
+  .read.warn .n{color:var(--amber-ink);} .read.warn{color:var(--amber-ink);}
+  .read.good .n{color:var(--green-mid);} .read.good{color:var(--green-mid);}
+  .read.bad .n{color:var(--red);} .read.bad{color:var(--red);}
+
+  .reason{margin-top:14px;font-size:13px;color:var(--ink-mid);line-height:1.6;
+    background:var(--bg);border-radius:8px;padding:12px 14px;}
+  .reason .rl{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--green-mid);display:block;margin-bottom:5px;}
+  .reason strong{color:var(--green-dark);font-weight:600;}
+  .kw{font-family:var(--mono);font-size:11.5px;background:#fff;border:1px solid var(--green-accent);
+    color:var(--green-dark);padding:1px 6px;border-radius:4px;white-space:nowrap;}
+
+  .alts{margin-top:14px;}
+  .alts-label{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--ink-muted);margin-bottom:8px;}
+  .alt-btn{display:block;width:100%;text-align:left;font-family:var(--mono);font-size:12.5px;
+    color:var(--ink-mid);background:#fff;border:1px dashed var(--rule);border-radius:7px;
+    padding:9px 12px;margin-bottom:7px;cursor:pointer;transition:all .15s;line-height:1.45;}
+  .alt-btn:hover{border-color:var(--amber);background:#fffdf5;color:var(--ink);}
+  .alt-btn .why{display:block;font-family:var(--sans);font-size:11.5px;color:var(--ink-muted);margin-top:3px;}
+
+  /* H1 placeholder area */
+  .soon-panel{border:1px solid var(--rule);border-radius:10px;padding:20px;}
+  .soon-panel h3{font-size:15px;color:var(--green-dark);margin-bottom:6px;}
+  .soon-panel p{font-size:13px;color:var(--ink-mid);margin-bottom:16px;}
+  .h1-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;
+    border:1px solid var(--rule);border-radius:8px;padding:10px 14px;margin-bottom:8px;}
+  .h1-row .pg{font-size:12px;color:var(--ink-muted);}
+  .h1-row .cur{font-family:var(--mono);font-size:13px;color:var(--ink);font-weight:500;}
+  .h1-tag{font-size:11px;padding:3px 9px;border-radius:4px;white-space:nowrap;}
+  .t-warn{background:var(--amber-light);color:var(--amber-ink);}
+  .t-good{background:var(--green-light);color:var(--green-dark);}
+
+  .check{border:1px solid var(--rule);border-radius:8px;padding:14px 16px;margin-bottom:10px;}
+  .check-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;flex-wrap:wrap;}
+  .check-name{font-size:14px;font-weight:600;color:var(--green-dark);}
+  .check-status{font-size:11px;padding:3px 10px;border-radius:20px;white-space:nowrap;
+    background:var(--green-light);color:var(--green-dark);font-weight:600;}
+  .check p{font-size:12.5px;color:var(--ink-mid);line-height:1.55;margin:0;}
+  .check strong{color:var(--green-dark);font-weight:600;}
+  .check .myth{margin-top:9px;font-size:12px;background:var(--amber-light);color:var(--amber-ink);
+    border-radius:6px;padding:9px 11px;line-height:1.55;}
+  .check .myth strong{color:var(--amber-ink);}
+  .check code{font-family:var(--mono);font-size:11.5px;background:#fff;border:1px solid var(--rule);
+    border-radius:4px;padding:1px 5px;}
+  .check.warn{border-color:#f3dca0;}
+  .check.bad{border-color:#f1bcbc;}
+  .check.warn .check-name,.check.bad .check-name{color:var(--ink);}
+  .check-status.warn{background:var(--amber-light);color:var(--amber-ink);}
+  .check-status.bad{background:var(--red-light);color:var(--red);}
+  .check .rec{margin-top:9px;font-size:12px;background:#fff;border:1px dashed var(--green-accent);
+    color:var(--ink-mid);border-radius:6px;padding:9px 11px;line-height:1.55;}
+  .check .rec strong{color:var(--green-dark);}
+  .check .rec.crit{border-color:var(--red);background:#fff7f7;}
+  .check .rec.crit strong{color:var(--red);}
+
+  /* TECH SUMMARY */
+  .tech-intro{font-size:13px;color:var(--ink-mid);line-height:1.6;margin-bottom:14px;}
+  .tech-sum{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .tech-pill{font-family:var(--mono);font-size:12px;padding:5px 12px;border-radius:20px;
+    display:flex;align-items:center;gap:6px;border:1px solid var(--rule);}
+  .tech-pill .c{font-weight:600;font-size:13px;}
+  .tech-pill.ok{background:var(--green-light);color:var(--green-dark);border-color:#bfe6cf;}
+  .tech-pill.warn{background:var(--amber-light);color:var(--amber-ink);border-color:#f3dca0;}
+  .tech-pill.bad{background:var(--red-light);color:var(--red);border-color:#f1bcbc;}
+
+  /* REDIRECT LIST */
+  .redir{margin-top:11px;border:1px solid var(--rule);border-radius:7px;overflow:hidden;}
+  .redir-head{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--ink-muted);background:var(--bg);padding:6px 11px;border-bottom:1px solid var(--rule);}
+  .redir-row{display:grid;grid-template-columns:1fr 18px 1fr;gap:8px;align-items:center;
+    padding:6px 11px;font-family:var(--mono);font-size:11.5px;border-bottom:1px solid var(--rule);}
+  .redir-row:last-child{border-bottom:none;}
+  .redir .old{color:var(--red);word-break:break-all;}
+  .redir .ra{color:var(--ink-muted);text-align:center;}
+  .redir .new{color:var(--green-mid);word-break:break-all;}
+  @media (max-width:620px){
+    .redir-row{grid-template-columns:1fr;gap:1px;}
+    .redir .ra{display:none;}
+  }
+
+  /* ALT TEXT CARDS */
+  .alt-card{border:1px solid var(--rule);border-radius:8px;padding:14px 16px;margin-bottom:10px;}
+  .alt-card.ok{border-color:#bfe6cf;}
+  .alt-card.warn{border-color:#f3dca0;}
+  .alt-card.bad{border-color:#f1bcbc;}
+  .alt-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap;}
+  .alt-card-title{font-size:13px;font-weight:600;color:var(--ink-mid);line-height:1.35;}
+  .alt-file{font-family:var(--mono);font-size:10.5px;color:var(--ink-muted);margin-top:2px;}
+  .alt-status{font-family:var(--mono);font-size:10px;font-weight:600;padding:3px 9px;border-radius:10px;white-space:nowrap;flex-shrink:0;}
+  .alt-status.ok{background:var(--green-light);color:var(--green-dark);}
+  .alt-status.warn{background:var(--amber-light);color:var(--amber-ink);}
+  .alt-status.bad{background:var(--red-light);color:var(--red);}
+  .alt-row{display:flex;gap:10px;align-items:flex-start;margin-top:8px;}
+  .alt-lbl{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);padding-top:3px;flex-shrink:0;min-width:62px;}
+  .alt-val{font-family:var(--mono);font-size:12px;color:var(--ink);line-height:1.5;}
+  .alt-empty{font-family:var(--mono);font-size:12px;color:var(--red);font-style:italic;}
+  .alt-deco{font-family:var(--mono);font-size:12px;color:var(--ink-muted);}
+  .alt-why{margin-top:8px;font-size:12px;color:var(--ink-muted);line-height:1.55;}
+  .alt-intro{font-size:13px;color:var(--ink-mid);line-height:1.6;margin-bottom:14px;}
+  .alt-note{font-size:12.5px;color:var(--ink-mid);line-height:1.6;background:var(--bg);border-radius:8px;padding:12px 14px;margin-bottom:14px;}
+  .alt-note .rl{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--green-mid);display:block;margin-bottom:5px;}
+
+  .footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--rule);font-size:12px;
+    color:var(--ink-muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+
+  @media (max-width:620px){
+    .page{padding:26px 16px 44px;}
+    .serp-title{font-size:17px;}
+    .meter{flex-direction:column;align-items:stretch;}
+    .meter .read{text-align:left;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+
+  /* ── KONKURRENZ / GSC / BLOG (Analyse-Bereiche) ── */
+  .sec-h{font-size:14px;font-weight:700;color:var(--green-dark);margin:22px 0 10px;
+    display:flex;align-items:center;gap:9px;}
+  .sec-h::before{content:'';width:4px;height:15px;border-radius:2px;background:var(--green-accent);}
+  .ka-tbl{width:100%;border-collapse:collapse;border:1px solid var(--rule);border-radius:8px;
+    overflow:hidden;font-size:13px;margin-bottom:6px;}
+  .ka-tbl th{background:var(--green-mid);color:#fff;text-align:left;font-weight:600;
+    font-size:11px;letter-spacing:.03em;padding:9px 12px;}
+  .ka-tbl td{padding:10px 12px;border-top:1px solid var(--rule);color:var(--ink-mid);
+    line-height:1.55;vertical-align:top;}
+  .ka-tbl tr:nth-child(even) td{background:var(--green-light);}
+  .ka-tbl td b,.ka-tbl td strong{color:var(--ink);}
+  .ka-firm{font-family:var(--mono);font-size:12px;color:var(--green-dark);font-weight:500;white-space:nowrap;}
+  .ka-seg{font-size:11.5px;color:var(--ink-muted);}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px;}
+  @media (max-width:620px){.two-col{grid-template-columns:1fr;}}
+  .pt-card{border:1px solid var(--rule);border-radius:8px;padding:14px 16px;}
+  .pt-card.win{border-color:#bfe6cf;background:var(--green-light);}
+  .pt-card h4{font-size:13px;color:var(--green-dark);margin-bottom:8px;}
+  .pt-card ul{list-style:none;display:flex;flex-direction:column;gap:7px;}
+  .pt-card li{font-size:12.5px;color:var(--ink-mid);line-height:1.5;padding-left:16px;position:relative;}
+  .pt-card li::before{content:'▸';position:absolute;left:0;color:var(--green-accent);font-size:10px;top:2px;}
+  .pt-card li b{color:var(--ink);}
+
+  .gsc-note{font-size:12.5px;line-height:1.6;background:var(--amber-light);color:var(--amber-ink);
+    border-radius:8px;padding:11px 13px;margin-bottom:6px;}
+  .gsc-tbl{width:100%;border-collapse:collapse;font-size:12.5px;border:1px solid var(--rule);
+    border-radius:8px;overflow:hidden;margin-bottom:4px;}
+  .gsc-tbl th{background:#f3f4f6;color:var(--ink-mid);text-align:left;font-weight:600;
+    font-size:11px;padding:8px 11px;}
+  .gsc-tbl td{padding:9px 11px;border-top:1px solid var(--rule);color:var(--ink-muted);height:16px;}
+  .gsc-fill{font-family:var(--mono);font-size:10px;color:var(--ink-muted);margin:2px 0 14px;}
+  .hyp{border:1px solid var(--rule);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .hyp .tag{font-family:var(--mono);font-size:10px;font-weight:600;color:#fff;background:var(--green-mid);
+    padding:2px 8px;border-radius:10px;margin-right:8px;}
+  .hyp p{font-size:12.5px;color:var(--ink-mid);line-height:1.55;display:inline;}
+  .hyp .v{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:600;
+    padding:2px 7px;border-radius:10px;margin-left:6px;white-space:nowrap;}
+  .v-yes{background:var(--green-mid);color:#fff;} .v-no{background:#f3f4f6;color:var(--ink-muted);}
+  .gsc-key{border:1px solid #f1bcbc;background:#fff7f7;border-radius:8px;padding:13px 15px;margin-bottom:6px;
+    font-size:13px;color:var(--ink-mid);line-height:1.6;}
+  .gsc-key strong{color:var(--red);}
+  .gsc-stat{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 4px;}
+  .gsc-stat .s{flex:1;min-width:120px;border:1px solid var(--rule);border-radius:8px;padding:10px 12px;text-align:center;}
+  .gsc-stat .s .n{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--green-dark);}
+  .gsc-stat .s .l{font-size:11px;color:var(--ink-muted);}
+  .zero-cat{font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--green-mid);margin:14px 0 7px;}
+  .zero-list{display:flex;flex-wrap:wrap;gap:6px;}
+  .zero-chip{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-mid);
+    background:var(--bg);border:1px solid var(--rule);border-radius:7px;padding:4px 9px;}
+  .zero-chip b{font-family:var(--mono);font-size:10px;color:var(--ink-muted);background:#fff;
+    border:1px solid var(--rule);border-radius:4px;padding:0 5px;}
+
+  /* Blog */
+  .blog-brief{background:var(--green-light);border:1px solid #bfe6cf;border-radius:8px;
+    padding:14px 16px;margin-bottom:18px;font-size:12.5px;line-height:1.7;}
+  .blog-brief .bl{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--green-mid);}
+  .blog-brief b{color:var(--ink);}
+  .blog-art{max-width:680px;}
+  .blog-art h1{font-size:24px;color:var(--green-dark);line-height:1.25;margin:6px 0 14px;}
+  .blog-art h2{font-size:16px;color:var(--green-dark);margin:18px 0 7px;}
+  .blog-art p{font-size:13.5px;color:var(--ink-mid);line-height:1.7;margin-bottom:11px;}
+  .blog-art ul{list-style:none;display:flex;flex-direction:column;gap:7px;margin:0 0 12px;}
+  .blog-art li{font-size:13.5px;color:var(--ink-mid);line-height:1.55;padding-left:18px;position:relative;}
+  .blog-art li::before{content:'▸';position:absolute;left:0;color:var(--green-accent);top:2px;font-size:11px;}
+  .blog-art li b{color:var(--ink);}
+  .blog-cta{background:var(--green-light);border-left:4px solid var(--green-mid);border-radius:0 6px 6px 0;
+    padding:13px 16px;font-size:13.5px;color:var(--green-dark);font-weight:600;line-height:1.55;margin-top:6px;}
+  .wordcount{font-family:var(--mono);font-size:10px;color:var(--ink-muted);margin-top:14px;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div>
+      <div class="eyebrow">Smartrplace · SEO-Praktikum · interaktiv</div>
+      <h1>SEO-Optimierer</h1>
+      <div class="sub">Vorschläge prüfen, selbst ausprobieren, in der Google-Vorschau sehen</div>
+    </div>
+  </div>
+
+  <div class="hint">So benutzt du es: Wähle oben einen <b>Bereich</b> und darunter eine <b>Seite</b>. In der Vorschau siehst du, wie die Seite bei Google erscheint. Schalte zwischen <b>Vorher</b> und <b>Empfehlung</b> um — oder tippe im Feld selbst und beobachte den Zeichenzähler.</div>
+
+  <div class="areas" id="areas"></div>
+  <div class="tabs" id="tabs"></div>
+
+  <div id="main"></div>
+
+  <div class="footer">
+    <span>Smartrplace GmbH · SEO-Praktikum</span>
+    <span id="foot-next"></span>
+  </div>
+</div>
+
+<script>
+const PAGES = [
+  {
+    id:'home', name:'Startseite', url:'smartrplace.com',
+    title:{
+      before:'Intelligente Raumsteuerung für Gebäude | Smartrplace',
+      after:null,
+      keyword:null,
+      reason:'<strong>Bereits gut.</strong> Keyword vorhanden, Länge passt (52 Zeichen). Kein Handlungsbedarf — belassen.',
+      alts:[]
+    },
+    meta:{ before:'Smartrplace automatisiert Raumsteuerung, Energiemanagement und Heizkostenabrechnung in Immobilien – für nachhaltige Energieeinsparung und mehr Komfort.',
+      reason:'<strong>Sehr gut.</strong> Beschreibend, mit Keywords und klarem Nutzen, ideale Länge.' },
+    h1:{
+      before:'Intelligente Raumsteuerung und Energiemanagement für Gebäude',
+      after:null, keyword:null,
+      reason:'<strong>Bereits stark.</strong> Enthält zwei Haupt-Keywords, ist beschreibend und eindeutig – und unterscheidet sich sinnvoll vom Title. Genau eine H1 auf der Seite. Kein Handlungsbedarf — belassen.',
+      alts:[]
+    },
+    h2:{
+      before:[
+        {t:'INTELLIGENTE LÖSUNGEN FÜR KOMPLEXE AUFGABEN'},
+        {t:'Amortisation in weniger als 12 Monaten'},
+        {t:'Effizienzsteigerung um 30 Prozent'},
+        {t:'Energiekosten senken um 24 Prozent'},
+        {t:'UNSERE REFERENZEN'},
+        {t:'UNSERE REFERENZEN', dup:true},
+        {t:'UNSERE PARTNER'},
+        {t:'UNSERE PARTNER', dup:true},
+        {t:'DIE ZUKUNFT STECKT IN IHREM GEBÄUDE.'},
+        {t:'BERATUNG VEREINBAREN'},
+        {t:'BERATUNG VEREINBAREN', dup:true}
+      ],
+      after:[
+        {t:'INTELLIGENTE LÖSUNGEN FÜR KOMPLEXE AUFGABEN', ok:true},
+        {t:'Amortisation in weniger als 12 Monaten', ok:true},
+        {t:'Effizienzsteigerung um 30 Prozent', ok:true},
+        {t:'Energiekosten senken um 24 Prozent', ok:true},
+        {t:'UNSERE REFERENZEN'},
+        {t:'UNSERE PARTNER'},
+        {t:'DIE ZUKUNFT STECKT IN IHREM GEBÄUDE.', ok:true},
+        {t:'BERATUNG VEREINBAREN'}
+      ],
+      reason:'<strong>Nach Sichtung der echten Seite verifiziert.</strong> Die drei großen Zahlen sind <strong>keine</strong> wertlosen nackten Zahlen, sondern die Überschriften des Hero-Bereichs – jeweils Beschriftung + Zahl, die zusammen eine Aussage ergeben („Amortisation in weniger als 12 Monaten", „Effizienzsteigerung um 30 Prozent", „Energiekosten senken um 24 Prozent"). Die Analyse-Tabelle hatte nur die große Zahl erfasst. Inhaltlich sind diese Überschriften gut und <strong>bleiben</strong>. Auch „INTELLIGENTE LÖSUNGEN FÜR KOMPLEXE AUFGABEN" und „DIE ZUKUNFT STECKT IN IHREM GEBÄUDE." sind im Live-Quelltext vollständige, aussagekräftige Überschriften – kein Handlungsbedarf. Der einzige belegte Handlungspunkt: die <strong>Desktop-/Mobile-Doppelungen</strong> (Referenzen, Partner, Beratung) – Google liest auch die per <code>display:none</code> versteckte Variante, daher darf die versteckte kein <code>&lt;h2&gt;</code> sein. Damit sinkt die Zahl von 11 auf 8.'
+    },
+    alt:{
+      images:[
+        {file:'slideshow/slide-1.jpg', desc:'Hero-Slideshow · Hauptbild',
+         before:'', after:'Smartrplace – smarte Gebäudesteuerung: automatisches Heizungs- und Raumklima-Management im Bürogebäude',
+         status:'bad',
+         why:'Leerer Alt-Text: das prominenteste Bild der Seite ist für Google und Screenreader unsichtbar. Mit Keyword (Gebäudesteuerung, Raumklima-Management) wird es zum Ranking-Faktor — Priorität 1.'},
+        {file:'features/einzelraumsteuerung.png', desc:'Feature-Kachel · Einzelraumsteuerung',
+         before:'Einzelraumsteuerung', after:'Smartrplace Einzelraumsteuerung – Softwareoberfläche zur automatischen Heizungsregelung nach Raumbelegung',
+         status:'warn',
+         why:'Zu knapp: benennt das Produkt, beschreibt aber weder den Bildinhalt noch das Ziel-Keyword im Kontext.'},
+        {file:'cases/berufsbildungszentrum.jpg', desc:'Referenz · Berufsbildungszentrum',
+         before:'Bildungszentrum', after:'Referenzprojekt Smartrplace: intelligente Einzelraumsteuerung im Berufsbildungszentrum',
+         status:'warn',
+         why:'Zu allgemein. Referenzbilder sind eine Chance, Keywords natürlich zu platzieren. Muster: „Referenzprojekt Smartrplace: [Lösung] bei [Firma]".'},
+        {file:'cases/lang.jpg', desc:'Referenz · Lang GmbH & Co. KG',
+         before:'Lang GmbH und Co. KG', after:'Referenzprojekt Smartrplace: smarte Gebäudesteuerung bei der Lang GmbH & Co. KG',
+         status:'warn',
+         why:'Firmenname allein reicht nicht – Google und Screenreader brauchen den Produkt-Kontext.'},
+        {file:'cases/jobcenter.jpg', desc:'Referenz · Jobcenter',
+         before:'Jobcenter', after:'Referenzprojekt Smartrplace: intelligentes Energiemanagement im Jobcenter',
+         status:'warn',
+         why:'Zu allgemein. Muster: „Referenzprojekt Smartrplace: [Lösung] im/bei [Firma]".'},
+        {file:'cases/walterfenster.jpg', desc:'Referenz · Walter Fenster',
+         before:'Walter Fenster', after:'Referenzprojekt Smartrplace: automatische Einzelraumsteuerung bei Walter Fenster',
+         status:'warn',
+         why:'Zu allgemein. Muster: „Referenzprojekt Smartrplace: [Lösung] bei [Firma]".'},
+        {file:'cases/zecher.jpg', desc:'Referenz · Zecher',
+         before:'Zecher', after:'Referenzprojekt Smartrplace: smarte Raumsteuerung bei Zecher',
+         status:'warn',
+         why:'Zu allgemein. Muster: „Referenzprojekt Smartrplace: [Lösung] bei [Firma]".'},
+        {file:'cases/casa_voltera_siena.jpg', desc:'Referenz · Casa Siena / Voltera',
+         before:'Casa Siena / Voltera', after:'Referenzprojekt Smartrplace: intelligente Gebäudesteuerung bei Casa Siena / Voltera',
+         status:'warn',
+         why:'Zu allgemein. Muster: „Referenzprojekt Smartrplace: [Lösung] bei [Firma]".'},
+        {file:'cases/studiumplus.jpg', desc:'Referenz · StudiumPlus Wetzlar',
+         before:'StudiumPlus - Wetzlar', after:'Referenzprojekt Smartrplace: smarte Einzelraumsteuerung bei StudiumPlus Wetzlar',
+         status:'warn',
+         why:'Zu allgemein. Muster: „Referenzprojekt Smartrplace: [Lösung] bei [Firma]".'},
+        {file:'cases/villa-albertine.png', desc:'Referenz · Villa Albertine',
+         before:'Villa Albertine', after:'Referenzprojekt Smartrplace: intelligentes Energiemanagement in der Villa Albertine',
+         status:'warn',
+         why:'Zu allgemein. Muster: „Referenzprojekt Smartrplace: [Lösung] bei [Firma]".'},
+        {file:'cases/dornbusch.jpeg', desc:'Referenz · Dornbusch Frankfurt',
+         before:'Dornbusch, Frankfurt', after:'Referenzprojekt Smartrplace: automatische Raumsteuerung im Wohngebäude Dornbusch, Frankfurt',
+         status:'warn',
+         why:'Zu allgemein. Muster: „Referenzprojekt Smartrplace: [Lösung] bei [Firma/Ort]".'},
+        {file:'cases/neue_denkerei.jpeg', desc:'Referenz · Neue Denkerei Kassel',
+         before:'Neue Denkerei, Kassel', after:'Referenzprojekt Smartrplace: smarte Gebäudesteuerung in der Neuen Denkerei, Kassel',
+         status:'warn',
+         why:'Zu allgemein. Muster: „Referenzprojekt Smartrplace: [Lösung] bei [Firma/Ort]".'},
+        {file:'partners/alter-energy-Logo-1024x216.png', desc:'Partner-Logo · Alter Energy',
+         before:'Logo', after:'Alter Energy – Technologiepartner von Smartrplace',
+         status:'warn',
+         why:'„Logo" sagt weder wessen Logo es ist noch den Kontext. Firmennamen einsetzen.'},
+        {file:'partners/caretronic-logo-transparent.png', desc:'Partner-Logo · Caretronic',
+         before:'Logo', after:'Caretronic – Technologiepartner von Smartrplace',
+         status:'warn',
+         why:'„Logo" sagt weder wessen Logo es ist noch den Kontext. Firmennamen einsetzen.'},
+        {file:'partners/Fiberfone.webp', desc:'Partner-Logo · Fiberfone',
+         before:'Logo', after:'Fiberfone – Technologiepartner von Smartrplace',
+         status:'warn',
+         why:'„Logo" sagt weder wessen Logo es ist noch den Kontext. Firmennamen einsetzen.'},
+        {file:'partners/logo_eq3-7b66e58f.png', desc:'Partner-Logo · eQ-3',
+         before:'Logo', after:'eQ-3 – Technologiepartner von Smartrplace',
+         status:'warn',
+         why:'„Logo" sagt weder wessen Logo es ist noch den Kontext. Firmennamen einsetzen.'},
+        {file:'partners/logo_goingsoft_schwarz_rot.png', desc:'Partner-Logo · Goingsoft',
+         before:'Logo', after:'Goingsoft – Technologiepartner von Smartrplace',
+         status:'warn',
+         why:'„Logo" sagt weder wessen Logo es ist noch den Kontext. Firmennamen einsetzen.'},
+        {file:'partners/logo-messteam-group.png-378x378.webp', desc:'Partner-Logo · Messteam Group',
+         before:'Logo', after:'Messteam Group – Technologiepartner von Smartrplace',
+         status:'warn',
+         why:'„Logo" sagt weder wessen Logo es ist noch den Kontext. Firmennamen einsetzen.'},
+        {file:'partners/Revima.png', desc:'Partner-Logo · Revima',
+         before:'Logo', after:'Revima – Technologiepartner von Smartrplace',
+         status:'warn',
+         why:'„Logo" sagt weder wessen Logo es ist noch den Kontext. Firmennamen einsetzen.'},
+        {file:'partners/montamis.png', desc:'Partner-Logo · Montamis',
+         before:'Logo', after:'Montamis – Technologiepartner von Smartrplace',
+         status:'warn',
+         why:'„Logo" sagt weder wessen Logo es ist noch den Kontext. Firmennamen einsetzen.'},
+        {file:'consultation/person.jpg', desc:'Kontaktbereich · Ansprechpartner',
+         before:'Dr. Siwanand Misara', after:'Dr. Siwanand Misara – Geschäftsführer Smartrplace, Ansprechpartner für smarte Gebäudesteuerung',
+         status:'warn',
+         why:'Name vorhanden – gut. Kontext und Rolle fehlen. Kurze Ergänzung verbessert Zugänglichkeit und SEO-Wert.'},
+        {file:'slideshow/banner-bg.svg', desc:'Dekoratives Hintergrundelement (SVG)',
+         before:'', after:'', status:'ok', decorative:true,
+         why:'Leerer Alt-Text ist hier korrekt und bewusst: dekorative Bilder sollen leer bleiben, damit Screenreader sie überspringen.'},
+        {file:'partners/border-closed.svg', desc:'Dekoratives Trennelement (SVG)',
+         before:'', after:'', status:'ok', decorative:true,
+         why:'Dekoratives Element – leerer Alt-Text ist korrekt.'},
+        {file:'calc.svg', desc:'Energie-Einsparrechner-Button',
+         before:'Energie-Einsparrechner öffnen', after:'Energie-Einsparrechner öffnen',
+         status:'ok',
+         why:'Beschreibt die Funktion des interaktiven Buttons präzise – genau richtig.'}
+      ],
+      reason:'Auf der Startseite hat <strong>1 Bild keinen Alt-Text</strong> (das Hero-Bild – Priorität 1) und haben <strong>20 Bilder einen zu knappen Alt-Text</strong> – darunter alle 8 Partner-Logos (nur „Logo") und 10 Referenzfotos (nur Firmenname). Lösung: für Referenzen das Muster <span class="kw">Referenzprojekt Smartrplace: [Lösung] bei [Firma]</span> anwenden, für Logos <span class="kw">[Partnername] – Technologiepartner von Smartrplace</span>. Dekorative SVG-Elemente bleiben bewusst leer.'
+    }
+  },
+  {
+    id:'einzelraum', name:'Einzelraumsteuerung', url:'smartrplace.com › einzelraumsteuerung',
+    title:{
+      before:'Einzelraumsteuerung für Gebäude | Smartrplace',
+      after:'Heizung & Klima nach Raumbelegung steuern | Smartrplace',
+      keyword:'Heizung nach Raumbelegung steuern',
+      reason:'Beschreibt die <strong>Funktion</strong> statt eines Gebäudetyps – gilt für Wohn- wie Gewerbeobjekte und schließt nichts aus. Trifft zugleich den stärksten Quick Win %KW% (Difficulty 25). Das spitze Pflicht-Keyword „Einzelraumregelung Nichtwohngebäude" fangen wir besser über einen eigenen Ratgeber-Artikel ab, statt die Produktseite darauf zu verengen.',
+      alts:[
+        {t:'Einzelraumsteuerung: Heizung nach Raumbelegung | Smartrplace',
+         w:'Behält das Wort „Einzelraumsteuerung" als zusätzliches Keyword. Mit ~60 Zeichen grenzwertig lang, aber noch im Rahmen.'}
+      ]
+    },
+    meta:{ before:'Intelligente Einzelraumsteuerung von Smartrplace: Heizung, Kühlung und Luftqualität automatisch geregelt – für mehr Komfort und weniger Energieverbrauch.',
+      reason:'<strong>Gut.</strong> Keyword + Nutzen vorhanden, ideale Länge.' },
+    h1:{
+      before:'Einzelraumsteuerung',
+      after:'Einzelraumsteuerung: Heizung & Klima nach Raumbelegung regeln',
+      keyword:'Heizung nach Raumbelegung steuern',
+      reason:'Behält den bekannten Kategoriebegriff <strong>„Einzelraumsteuerung"</strong> (passt zu Breadcrumb &amp; Navigation) und ergänzt ihn um den stärksten Quick Win %KW% (Difficulty 25). Bewusst „regeln" statt „steuern", damit H1 und Title sich leicht unterscheiden und gemeinsam mehr Suchvarianten abdecken. Bleibt offen für Wohn- wie Gewerbeobjekte.',
+      alts:[
+        {t:'Intelligente Einzelraumsteuerung für Nichtwohngebäude',
+         w:'Spielt die GEG-§63-Pflicht direkt auf der Produktseite (Keyword „Einzelraumregelung Nichtwohngebäude", Difficulty 50). Wähle dies nur, wenn die Seite klar auf das B2B-/Pflicht-Geschäft positioniert werden soll – verengt weg von Wohngebäuden.'}
+      ]
+    },
+    h2:{
+      before:[
+        {t:'Die Ausgangslage'},
+        {t:'Die Herausforderung'},
+        {t:'Der Smartrplace-Ansatz'},
+        {t:'VORTEILE'},
+        {t:'Interesse geweckt?'},
+        {t:'WEITERE LÖSUNGEN'}
+      ],
+      after:[
+        {t:'Die Ausgangslage: starre Heizzeiten statt Bedarf'},
+        {t:'Die Herausforderung: jeder Raum wird anders genutzt'},
+        {t:'Der Smartrplace-Ansatz: Heizung & Klima nach Raumbelegung', kw:true},
+        {t:'Vorteile der Einzelraumsteuerung', kw:true},
+        {t:'Interesse geweckt?'},
+        {t:'Weitere Lösungen von Smartrplace'}
+      ],
+      reason:'Die Erzähllogik (Ausgangslage → Herausforderung → Ansatz → Vorteile → CTA → mehr) ist gut und bleibt. Zwei Probleme werden behoben: <strong>1)</strong> Die H2 waren auf allen drei Produktseiten <strong>identisch</strong> – jede Seite verschenkte so ihr Thema. Jetzt trägt die Gliederung das Seiten-Keyword. <strong>2)</strong> Das Ziel-Keyword %KW% steht jetzt im wichtigsten H2 („Der Ansatz") und in „Vorteile". Nicht jedes H2 wird vollgestopft – nur dort, wo es natürlich passt.'
+    },
+    alt:{
+      images:[
+        {file:'calc.svg', desc:'Energie-Einsparrechner-Button',
+         before:'Energie-Einsparrechner öffnen', after:'Energie-Einsparrechner öffnen',
+         status:'ok',
+         why:'Beschreibt die Funktion des interaktiven Buttons präzise – genau richtig. Kein Handlungsbedarf.'}
+      ],
+      note:'Diese Seite enthält nur ein <code>&lt;img&gt;</code>-Tag. Alle anderen visuellen Elemente (Hintergrundfoto, Icons) sind CSS-Hintergrundbilder (<code>background-image</code>) oder Inline-SVGs – diese brauchen keinen Alt-Text.',
+      reason:'<strong>Kein Handlungsbedarf auf dieser Seite.</strong> Das einzige Bild hat bereits einen korrekten Alt-Text. Die Alt-Text-Schwächen der Website liegen auf der <strong>Startseite</strong> – dort gibt es 1 fehlendes und ~23 zu knappe Alt-Texte.'
+    }
+  },
+  {
+    id:'heizkosten', name:'Heizkostenabrechnung', url:'smartrplace.com › heizkostenabrechnung',
+    title:{
+      before:'Digitale Heizkostenabrechnung | Smartrplace',
+      after:'Heizkostenabrechnung: digital & EED-konform | Smartrplace',
+      keyword:'digitale Heizkostenabrechnung',
+      reason:'Differenziert über die gesetzliche Konformität (EU-Richtlinie / Heizkostenverordnung) – den Pflicht-Aspekt, den die Seite selbst betont – statt über ein Zielgruppenwort, das Gebäude ausschließen würde. Keyword %KW% bleibt im Titel und gilt für Wohn- wie Gewerbeobjekte.',
+      alts:[
+        {t:'Digitale Heizkostenabrechnung für Immobilien | Smartrplace',
+         w:'Einfacheres Wording mit neutralem „Immobilien" – schließt weder Wohn- noch Gewerbeobjekte aus.'}
+      ]
+    },
+    meta:{ before:'Automatisierte, transparente Heizkostenabrechnung von Smartrplace: Verbrauch erfassen, visualisieren und EED-konform abrechnen – mit weniger Aufwand.',
+      reason:'<strong>Gut.</strong> Keyword + Nutzen, EED-konform als Differenzierung, ideale Länge.' },
+    h1:{
+      before:'Heizkostenabrechnung',
+      after:'Digitale Heizkostenabrechnung – automatisch erfassen und abrechnen',
+      keyword:'digitale Heizkostenabrechnung',
+      reason:'Führt mit dem Keyword %KW% und ergänzt den eigentlichen USP der Seite (automatisches Erfassen, Visualisieren, Abrechnen). Ergänzt den Title sinnvoll: Der Title betont die <strong>EED-Konformität</strong>, die H1 den <strong>Automatisierungs-Nutzen</strong>. Neutral gegenüber Gebäudetyp – konsistent mit dem Title.',
+      alts:[
+        {t:'Heizkostenabrechnung für Gewerbe – digital und EED-konform',
+         w:'Macht die B2B-Positionierung sichtbar (Keyword „digitale Heizkostenabrechnung Gewerbe", Difficulty 55 – laut Recherche eher Zusatznutzen). Wähle dies, wenn die Seite gezielt Gewerbekunden ansprechen soll.'}
+      ]
+    },
+    h2:{
+      before:[
+        {t:'Die Ausgangslage'},
+        {t:'Die Herausforderung'},
+        {t:'Der Smartrplace-Ansatz'},
+        {t:'VORTEILE'},
+        {t:'Interesse geweckt?'},
+        {t:'WEITERE LÖSUNGEN'}
+      ],
+      after:[
+        {t:'Die Ausgangslage: gesetzliche Pflicht, hoher Aufwand'},
+        {t:'Die Herausforderung: viele Zähler, manuelle Ablesung'},
+        {t:'Der Smartrplace-Ansatz: digitale Abrechnung, automatisch & EED-konform', kw:true},
+        {t:'Vorteile der digitalen Heizkostenabrechnung', kw:true},
+        {t:'Interesse geweckt?'},
+        {t:'Weitere Lösungen von Smartrplace'}
+      ],
+      reason:'Gleiche Logik wie bei der Einzelraumsteuerung: Die bisher auf allen drei Seiten <strong>identischen</strong> H2 bekommen das Seiten-Thema. Das Keyword %KW% steht jetzt im Ansatz-H2, „EED-konform" als Differenzierung in der Gliederung – derselbe Pflicht-Aspekt, den Title und H1 schon tragen.'
+    },
+    alt:{
+      images:[
+        {file:'calc.svg', desc:'Energie-Einsparrechner-Button',
+         before:'Energie-Einsparrechner öffnen', after:'Energie-Einsparrechner öffnen',
+         status:'ok',
+         why:'Beschreibt die Funktion des interaktiven Buttons präzise – genau richtig. Kein Handlungsbedarf.'}
+      ],
+      note:'Diese Seite enthält nur ein <code>&lt;img&gt;</code>-Tag. Alle anderen visuellen Elemente (Hintergrundfoto, Icons) sind CSS-Hintergrundbilder (<code>background-image</code>) oder Inline-SVGs – diese brauchen keinen Alt-Text.',
+      reason:'<strong>Kein Handlungsbedarf auf dieser Seite.</strong> Das einzige Bild hat bereits einen korrekten Alt-Text. Die Alt-Text-Schwächen der Website liegen auf der <strong>Startseite</strong> – dort gibt es 1 fehlendes und ~23 zu knappe Alt-Texte.'
+    }
+  },
+  {
+    id:'mieterstrom', name:'Mieterstrom', url:'smartrplace.com › mieterstrom',
+    title:{
+      before:'Mieterstrom & Energiemanagement | Smartrplace',
+      after:'Mieterstrom & PV-Eigenverbrauch optimieren | Smartrplace',
+      keyword:'Solarstrom Eigenverbrauch Gewerbe optimieren',
+      reason:'Ein klares Fokusthema statt zweier. Greift %KW% auf und passt exakt zum Seiteninhalt (PV, Speicher, Verbrauch). Das aussichtslose „Energiemanagement" (Difficulty 85) fliegt raus.',
+      alts:[
+        {t:'Mieterstrom einfach & transparent abrechnen | Smartrplace',
+         w:'Fokus aufs Abrechnen — konkrete Handlung mit hoher Kaufabsicht.'}
+      ]
+    },
+    meta:{ before:'Mieterstrom transparent abrechnen: Smartrplace verknüpft PV-Anlagen, Speicher und Verbrauch in einem System – für optimierten Eigenverbrauch und Abrechnung.',
+      reason:'<strong>Gut.</strong> Klarer Fokus auf Mieterstrom + Eigenverbrauch, ideale Länge.' },
+    h1:{
+      before:'Mieterstrom & Energie-Management',
+      after:'Mieterstrom & PV-Eigenverbrauch transparent abrechnen',
+      keyword:'Solarstrom Eigenverbrauch Gewerbe optimieren',
+      reason:'Ein klares Fokusthema statt des vagen „Energie-Management". Greift %KW% auf und passt exakt zum Seiteninhalt (PV, Speicher, Verbrauch). Ergänzt den Title: Dieser betont „optimieren", die H1 das <strong>Abrechnen</strong> – die Handlung mit hoher Kaufabsicht.',
+      alts:[
+        {t:'Mieterstrom für Mehrfamilienhäuser einfach abrechnen',
+         w:'Nimmt den Gebäudetyp aus dem Seiteninhalt auf („Mehrfamilienhaus") und setzt voll auf den Abrechnungs-Nutzen. Wähle dies, wenn das Abrechnen der Hauptverkaufsgrund der Seite ist.'}
+      ]
+    },
+    h2:{
+      before:[
+        {t:'Die Ausgangslage'},
+        {t:'Die Herausforderung'},
+        {t:'Der Smartrplace-Ansatz'},
+        {t:'VORTEILE'},
+        {t:'Interesse geweckt?'},
+        {t:'WEITERE LÖSUNGEN'}
+      ],
+      after:[
+        {t:'Die Ausgangslage: PV auf dem Mehrfamilienhaus'},
+        {t:'Die Herausforderung: komplexe Messkonzepte & Abrechnung'},
+        {t:'Der Smartrplace-Ansatz: Mieterstrom & PV-Eigenverbrauch in einem System', kw:true},
+        {t:'Vorteile für Eigenverbrauch & Abrechnung', kw:true},
+        {t:'Interesse geweckt?'},
+        {t:'Weitere Lösungen von Smartrplace'}
+      ],
+      reason:'Auch hier verschwinden die identischen Allerwelts-H2. Die Gliederung greift jetzt das Fokusthema (%KW%) auf und benennt den konkreten Nutzen (Eigenverbrauch & Abrechnung) – passend zu Title und H1, die ebenfalls auf Mieterstrom + PV-Eigenverbrauch statt auf „Energie-Management" zielen.'
+    },
+    alt:{
+      images:[
+        {file:'calc.svg', desc:'Energie-Einsparrechner-Button',
+         before:'Energie-Einsparrechner öffnen', after:'Energie-Einsparrechner öffnen',
+         status:'ok',
+         why:'Beschreibt die Funktion des interaktiven Buttons präzise – genau richtig. Kein Handlungsbedarf.'}
+      ],
+      note:'Diese Seite enthält nur ein <code>&lt;img&gt;</code>-Tag. Alle anderen visuellen Elemente (Hintergrundfoto, Icons) sind CSS-Hintergrundbilder (<code>background-image</code>) oder Inline-SVGs – diese brauchen keinen Alt-Text.',
+      reason:'<strong>Kein Handlungsbedarf auf dieser Seite.</strong> Das einzige Bild hat bereits einen korrekten Alt-Text. Die Alt-Text-Schwächen der Website liegen auf der <strong>Startseite</strong> – dort gibt es 1 fehlendes und ~23 zu knappe Alt-Texte.'
+    }
+  }
+];
+
+const AREAS = [
+  {id:'title', num:'1', label:'Title-Tags'},
+  {id:'meta',  num:'2', label:'Meta-Descriptions'},
+  {id:'h1',    num:'3', label:'H1-Überschriften'},
+  {id:'h2',    num:'4', label:'H2-Struktur'},
+  {id:'tech',  num:'5', label:'Technik-Check'},
+  {id:'alt',   num:'6', label:'Alt-Texte'},
+  {id:'konkurrenz', num:'7', label:'Konkurrenzanalyse'},
+  {id:'gsc',   num:'8', label:'Search Console'},
+  {id:'blog',  num:'9', label:'Blog-Entwurf'}
+];
+const GLOBAL_AREAS={
+  tech:'Technische Prüfung – gilt für die gesamte Website (nicht pro Seite)',
+  konkurrenz:'Wettbewerbsumfeld – gilt für die gesamte Website (nicht pro Seite)',
+  gsc:'Search-Console-Auswertung – gilt für die gesamte Website (nicht pro Seite)',
+  blog:'Content-Vorschlag – ein eigenständiger Ratgeber-Artikel (Aufgabe 6)'
+};
+
+// Technik-Check: geprüft am 18.06.2026 per Live-Abruf der echten Seiten
+const TECH = [
+  {
+    name:'301-Weiterleitungen alter Seiten', status:'bad', label:'❗ Kritisch',
+    body:'Beim Website-Relaunch wurden alte Produkt- und Infoseiten entfernt. Mehrere über Jahre in Google indexierte URLs liefern jetzt einen Fehler – <strong>ohne 301-Weiterleitung</strong> auf eine passende neue Seite. Jede URL unten wurde am 18.06.2026 einzeln live geprüft. <strong>Wichtig:</strong> Nicht alle alten URLs sind betroffen – einige alte Blog-Beiträge (z. B. der CO₂-Preis-Artikel) und das Impressum leben weiter.',
+    redirects:[
+      {o:'/smartrroomcontrol', n:'/einzelraumsteuerung/'},
+      {o:'/smartrair', n:'/einzelraumsteuerung/'},
+      {o:'/portfolio-item/smartrroomcontrol/', n:'/einzelraumsteuerung/'},
+      {o:'/portfolio-item/smartrmonitoring/', n:'/solutions.html'},
+      {o:'/portfolio-item/smartrcockpit/', n:'/solutions.html'},
+      {o:'/referenzen/', n:'/references.html'},
+      {o:'/partner/', n:'/about.html'},
+      {o:'/clear-light-partner-kunden/', n:'/references.html'},
+      {o:'/kosten-nutzen-analyse/', n:'/contact.html'}
+    ],
+    rec:'<strong>Empfehlung (Priorität 1):</strong> Für jede tote URL eine <strong>301-Weiterleitung</strong> auf das genannte Ziel einrichten – so vererbt sich das aufgebaute Ranking-Signal, statt verloren zu gehen. <strong>Zusätzlich:</strong> Der noch aktive CO₂-Blogbeitrag verlinkt am Ende auf das tote <code>/kosten-nutzen-analyse/</code> – dieser <strong>kaputte interne Link</strong> sollte direkt korrigiert werden.', recCrit:true
+  },
+  {
+    name:'Sitemap & robots.txt', status:'warn', label:'⚠️ Gut, kleine Verbesserung',
+    body:'Die <code>robots.txt</code> erlaubt das Crawlen (<code>Allow: /</code>) und verweist korrekt auf die Sitemap. Die <code>sitemap.xml</code> listet alle aktuellen Seiten (Start, Lösungen, die drei Produktseiten, Referenzen, FAQ, Über uns, Kontakt). Grundlage steht also.',
+    rec:'<strong>Verbesserung:</strong> Die Sitemap mischt URL-Stile (Produktseiten als <code>/einzelraumsteuerung/</code>, andere als <code>solutions.html</code>) und enthält kein <code>&lt;lastmod&gt;</code>-Datum. Einheitliche URLs und Änderungsdaten helfen Google, Aktualisierungen schneller zu erkennen.'
+  },
+  {
+    name:'Meta-Robots / Indexierbarkeit', status:'ok', label:'✅ In Ordnung',
+    body:'Keine der Seiten setzt ein <code>&lt;meta name="robots"&gt;</code>-Tag. Der Standard von Browsern und Suchmaschinen ist <strong>„index, follow"</strong> – die Seiten dürfen also indexiert werden. Genau so soll es sein.',
+    myth:'<strong>Mythos aufgeklärt:</strong> Ein fehlendes Robots-Meta-Tag ist <strong>kein</strong> Fehler. Die SEO-Browser-Extension hatte das fälschlich als Problem markiert (False Positive). Ein explizites Tag wäre nur nötig, um etwas <em>auszuschließen</em> (z. B. <code>noindex</code>).'
+  },
+  {
+    name:'Canonical-Tags', status:'ok', label:'✅ In Ordnung',
+    body:'Jede Seite verweist per <code>&lt;link rel="canonical"&gt;</code> auf sich selbst (z. B. <code>/einzelraumsteuerung/</code>). Das beugt Duplicate-Content vor und sagt Google klar, welche URL die „echte" ist.'
+  },
+  {
+    name:'Mobil-Optimierung (Viewport)', status:'ok', label:'✅ In Ordnung',
+    body:'Alle geprüften Seiten enthalten das <code>&lt;meta name="viewport"&gt;</code>-Tag. Die Seite passt sich an Smartphone-Bildschirme an – wichtig, weil Google die mobile Version für das Ranking heranzieht (Mobile-First-Indexing).'
+  },
+  {
+    name:'HTTPS / Verschlüsselung', status:'ok', label:'✅ In Ordnung',
+    body:'Die gesamte Website wird über <strong>HTTPS</strong> ausgeliefert. Die Verbindung ist verschlüsselt – ein bestätigter (wenn auch kleiner) Ranking-Faktor und ein Vertrauenssignal für Besucher.'
+  },
+  {
+    name:'Social-Vorschau (Open Graph)', status:'ok', label:'✅ Bonus vorhanden',
+    body:'Alle Seiten haben vollständige <strong>Open-Graph-</strong> und <strong>Twitter-Card-</strong>Tags (Titel, Beschreibung, Vorschaubild). Beim Teilen in sozialen Netzwerken oder Messengern erscheint automatisch eine ansprechende Vorschau.'
+  }
+];
+
+// length rules per area
+const RULES = {
+  title:{idealMin:50,idealMax:60,max:65,trunc:60,
+    warn:'etwas kurz',good:'ideal',bad:'zu lang – Google schneidet evtl. ab'},
+  meta:{idealMin:140,idealMax:160,max:170,trunc:160,
+    warn:'etwas kurz',good:'ideal',bad:'zu lang – wird abgeschnitten'},
+  h1:{idealMin:30,idealMax:70,max:90,trunc:999,
+    warn:'sehr knapp – Keyword ergänzen',good:'prägnant',bad:'recht lang – ggf. kürzen'}
+};
+
+const state = { area:'title', page:'einzelraum', sel:{} };
+PAGES.forEach(p=>{
+  const tHasAfter = !!p.title.after;
+  state.sel[p.id] = {
+    titleMode: tHasAfter?'after':'before', titleCustom:p.title.after||p.title.before,
+    metaMode:'before', metaCustom:p.meta.before,
+    h1Mode: p.h1.after?'after':'before', h1Custom:p.h1.after||p.h1.before,
+    h2Mode: p.h2 && p.h2.after ? 'after':'before',
+    altMode: 'before'
+  };
+});
+
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const cur=()=>PAGES.find(p=>p.id===state.page);
+const selOf=()=>state.sel[state.page];
+
+function titleValue(){
+  const p=cur(),s=selOf();
+  if(s.titleMode==='before')return p.title.before;
+  if(s.titleMode==='after')return p.title.after||p.title.before;
+  return s.titleCustom;
+}
+function metaValue(){
+  const p=cur(),s=selOf();
+  if(s.metaMode==='before')return p.meta.before;
+  return s.metaCustom;
+}
+function h1Value(){
+  const p=cur(),s=selOf();
+  if(s.h1Mode==='before')return p.h1.before;
+  if(s.h1Mode==='after')return p.h1.after||p.h1.before;
+  return s.h1Custom;
+}
+
+function buildAreas(){
+  $('areas').innerHTML=AREAS.map(a=>
+    `<button class="area-btn ${a.soon?'soon':''} ${state.area===a.id?'active':''}" data-area="${a.id}">
+      <span class="num">${a.num}</span>${a.label}${a.soon?'<span class="badge">als Nächstes</span>':''}
+    </button>`).join('');
+  $('areas').querySelectorAll('.area-btn').forEach(b=>
+    b.onclick=()=>{state.area=b.dataset.area;render();});
+}
+function buildTabs(){
+  if(GLOBAL_AREAS[state.area]){
+    $('tabs').innerHTML=`<span style="font-size:12px;color:var(--ink-muted);padding:10px 2px;">${GLOBAL_AREAS[state.area]}</span>`;
+    return;
+  }
+  $('tabs').innerHTML=PAGES.map(p=>
+    `<button class="tab ${state.page===p.id?'active':''}" data-page="${p.id}">${p.name}</button>`).join('');
+  $('tabs').querySelectorAll('.tab').forEach(b=>
+    b.onclick=()=>{state.page=b.dataset.page;render();});
+}
+
+function truncated(text,limit){
+  if(text.length<=limit)return esc(text);
+  return esc(text.slice(0,limit))+'<span class="trunc">…</span>';
+}
+
+function serpHTML(){
+  const p=cur();
+  const t=titleValue(), m=metaValue();
+  const R=RULES;
+  return `<div class="serp-label">Vorschau · so erscheint die Seite in der Google-Suche</div>
+  <div class="serp">
+    <div class="serp-url-row">
+      <div class="serp-favi"><span></span></div>
+      <div><div class="serp-site">Smartrplace</div><div class="u">${esc(p.url)}</div></div>
+    </div>
+    <div class="serp-title">${truncated(t,R.title.trunc)}</div>
+    <div class="serp-desc">${truncated(m,R.meta.trunc)}</div>
+  </div>`;
+}
+
+function h1PreviewHTML(){
+  const p=cur(), h=h1Value();
+  const crumb = p.id==='home' ? 'Start' : 'Start / Lösungen / '+p.name;
+  return `<div class="serp-label">Vorschau · so erscheint die Überschrift auf der Seite (nicht bei Google)</div>
+  <div class="h1prev">
+    <div class="h1prev-crumb">${esc(crumb)}</div>
+    <div class="h1prev-h1">${esc(h)}</div>
+    <div class="h1prev-sub">SMARTR GESTEUERT</div>
+  </div>`;
+}
+
+function h2OutlineHTML(){
+  const p=cur(), s=selOf();
+  const before = s.h2Mode==='before';
+  const list = before ? p.h2.before : p.h2.after;
+  const h1txt = before ? p.h1.before : (p.h1.after||p.h1.before);
+  const items = list.map(it=>{
+    let badge='';
+    if(before){
+      if(it.dup) badge='<span class="h2badge bad">doppelt</span>';
+      else if(it.num) badge='<span class="h2badge bad">nur Zahl</span>';
+      else if(it.cut) badge='<span class="h2badge warn">abgeschnitten</span>';
+    } else {
+      if(it.kw) badge='<span class="h2badge good">Keyword</span>';
+      else if(it.ok) badge='<span class="h2badge good">bleibt</span>';
+      else if(it.tmpl) badge='<span class="h2badge warn">prüfen</span>';
+    }
+    const warn = before && (it.dup||it.num||it.cut);
+    return `<div class="h2item ${warn?'warn':''}"><span class="h2bar"></span>
+      <span class="h2txt">${esc(it.t)}</span>${badge}</div>`;
+  }).join('');
+  return `<div class="serp-label">Vorschau · Überschriften-Gliederung der Seite</div>
+  <div class="outline">
+    <div class="outline-h1"><span class="lvl">H1</span>${esc(h1txt)}</div>
+    <div class="outline-h2s">${items}</div>
+  </div>`;
+}
+
+function altHTML(){
+  const p=cur(), s=selOf();
+  const before = s.altMode==='before';
+  if(!p.alt) return `<p style="color:var(--ink-muted);font-size:13px;padding:16px;">Keine Alt-Text-Daten verfügbar.</p>`;
+
+  const {images, reason, note} = p.alt;
+  const nb = images.filter(i=>i.status==='bad').length;
+  const nw = images.filter(i=>i.status==='warn').length;
+  const no = images.filter(i=>i.status==='ok').length;
+
+  const sum = `<div class="tech-sum">
+    ${nb?`<span class="tech-pill bad"><span class="c">${nb}</span> kein Alt-Text</span>`:''}
+    ${nw?`<span class="tech-pill warn"><span class="c">${nw}</span> verbesserungswürdig</span>`:''}
+    ${no?`<span class="tech-pill ok"><span class="c">${no}</span> bereits gut</span>`:''}
+  </div>`;
+
+  const cards = images.map(img=>{
+    const val = before ? img.before : img.after;
+    let textDisplay;
+    if(img.decorative){
+      textDisplay = `<span class="alt-deco">(leer – korrekt für dekoratives Bild)</span>`;
+    } else if(val===''){
+      textDisplay = `<span class="alt-empty">(kein Alt-Text gesetzt)</span>`;
+    } else {
+      textDisplay = `<span class="alt-val">"${esc(val)}"</span>`;
+    }
+    let statusLabel, statusCls;
+    if(img.status==='ok'){statusLabel='✅ Gut';statusCls='ok';}
+    else if(img.status==='bad'){statusLabel='❌ Fehlt';statusCls='bad';}
+    else{statusLabel='⚠️ Verbesserbar';statusCls='warn';}
+
+    return `<div class="alt-card ${img.status}">
+      <div class="alt-card-top">
+        <div>
+          <div class="alt-card-title">${esc(img.desc)}</div>
+          <div class="alt-file">${esc(img.file)}</div>
+        </div>
+        <span class="alt-status ${statusCls}">${statusLabel}</span>
+      </div>
+      <div class="alt-row">
+        <span class="alt-lbl">${before?'Aktuell':'Empfehlung'}</span>
+        <div>${textDisplay}</div>
+      </div>
+      <div class="alt-why">${img.why}</div>
+    </div>`;
+  }).join('');
+
+  const noteHTML = note ? `<div class="alt-note"><span class="rl">Hinweis</span>${note}</div>` : '';
+  const reasonHTML = reason ? `<div class="reason" style="margin-top:16px;"><span class="rl">${before?'Analyseergebnis':'Empfehlung'}</span>${reason}</div>` : '';
+
+  return `<div class="serp-label">Übersicht · Bilder und Alt-Texte auf dieser Seite</div>
+  <div class="editor">
+    <div class="ed-head"><span>Alt-Texte prüfen & verbessern</span>
+      <span class="ed-modes">
+        <button class="mode-btn ${before?'active':''}" data-mode="before">Vorher</button>
+        <button class="mode-btn ${!before?'active':''}" data-mode="after">Empfehlung</button>
+      </span>
+    </div>
+    <div class="ed-body">
+      ${sum}
+      ${noteHTML}
+      ${cards}
+      ${reasonHTML}
+    </div>
+  </div>`;
+}
+
+function meterHTML(len,rule){
+  let cls='good',txt=rule.good;
+  if(len<rule.idealMin){cls='warn';txt=rule.warn;}
+  else if(len>rule.idealMax){cls='bad';txt=rule.bad;}
+  const pct=Math.min(100,(len/rule.max)*100);
+  const il=(rule.idealMin/rule.max)*100, iw=((rule.idealMax-rule.idealMin)/rule.max)*100;
+  return `<div class="meter">
+    <div class="bar"><span class="ideal" style="left:${il}%;width:${iw}%"></span>
+      <span class="fill ${cls}" style="width:${pct}%"></span></div>
+    <span class="read ${cls}"><span class="n">${len}</span> Zeichen · ${txt}</span>
+  </div>`;
+}
+
+function editorHTML(){
+  const p=cur(),s=selOf();
+  if(state.area==='title'){
+    const val=titleValue(), hasAfter=!!p.title.after;
+    const reason=(p.title.reason||'').replace('%KW%', p.title.keyword?`<span class="kw">${esc(p.title.keyword)}</span>`:'');
+    const alts=(p.title.alts||[]).map((a,i)=>
+      `<button class="alt-btn" data-alt="${i}">${esc(a.t)}<span class="why">${a.w}</span></button>`).join('');
+    return `<div class="editor">
+      <div class="ed-head"><span>Title-Tag bearbeiten</span>
+        <span class="ed-modes">
+          <button class="mode-btn ${s.titleMode==='before'?'active':''}" data-mode="before">Vorher</button>
+          <button class="mode-btn ${s.titleMode==='after'?'active':''}" data-mode="after" ${hasAfter?'':'disabled'}>Empfehlung</button>
+        </span>
+      </div>
+      <div class="ed-body">
+        <input class="ed-input" id="edInput" type="text" value="${esc(val)}">
+        <div id="meterSlot">${meterHTML(val.length,RULES.title)}</div>
+        <div class="reason"><span class="rl">${hasAfter?'Warum diese Empfehlung':'Bewertung'}</span>${reason}</div>
+        ${alts?`<div class="alts"><div class="alts-label">Alternative ausprobieren</div>${alts}</div>`:''}
+      </div></div>`;
+  }
+  if(state.area==='meta'){
+    const val=metaValue();
+    return `<div class="editor">
+      <div class="ed-head"><span>Meta-Description bearbeiten</span>
+        <span class="ed-modes">
+          <button class="mode-btn ${s.metaMode==='before'?'active':''}" data-mode="before">Aktuell</button>
+        </span>
+      </div>
+      <div class="ed-body">
+        <textarea class="ed-input" id="edInput" rows="3">${esc(val)}</textarea>
+        <div id="meterSlot">${meterHTML(val.length,RULES.meta)}</div>
+        <div class="reason"><span class="rl">Bewertung</span>${p.meta.reason}</div>
+      </div></div>`;
+  }
+  if(state.area==='h2'){
+    const cb=p.h2.before.length, ca=p.h2.after.length;
+    const kwForReason = p.h1.keyword || p.title.keyword;
+    const reason=(p.h2.reason||'').replace('%KW%', kwForReason?`<span class="kw">${esc(kwForReason)}</span>`:'');
+    return `<div class="editor">
+      <div class="ed-head"><span>H2-Struktur bearbeiten</span>
+        <span class="ed-modes">
+          <button class="mode-btn ${s.h2Mode==='before'?'active':''}" data-mode="before">Vorher</button>
+          <button class="mode-btn ${s.h2Mode==='after'?'active':''}" data-mode="after">Empfehlung</button>
+        </span>
+      </div>
+      <div class="ed-body">
+        <div class="h2count"><span class="n">${cb}</span> H2 <span class="arrow">→</span> <span class="n good">${ca}</span> H2${cb!==ca?' <span class="h2count-note">· Doppelungen &amp; Zahlen-H2 bereinigt</span>':' <span class="h2count-note">· Struktur bleibt, Keywords ergänzt</span>'}</div>
+        <div class="reason"><span class="rl">Warum diese Struktur</span>${reason}</div>
+      </div></div>`;
+  }
+  // h1
+  const val=h1Value(), hasAfter=!!p.h1.after;
+  const reason=(p.h1.reason||'').replace('%KW%', p.h1.keyword?`<span class="kw">${esc(p.h1.keyword)}</span>`:'');
+  const alts=(p.h1.alts||[]).map((a,i)=>
+    `<button class="alt-btn" data-alt="${i}">${esc(a.t)}<span class="why">${a.w}</span></button>`).join('');
+  return `<div class="editor">
+    <div class="ed-head"><span>H1-Überschrift bearbeiten</span>
+      <span class="ed-modes">
+        <button class="mode-btn ${s.h1Mode==='before'?'active':''}" data-mode="before">Vorher</button>
+        <button class="mode-btn ${s.h1Mode==='after'?'active':''}" data-mode="after" ${hasAfter?'':'disabled'}>Empfehlung</button>
+      </span>
+    </div>
+    <div class="ed-body">
+      <input class="ed-input" id="edInput" type="text" value="${esc(val)}">
+      <div id="meterSlot">${meterHTML(val.length,RULES.h1)}</div>
+      <div class="reason"><span class="rl">${hasAfter?'Warum diese Empfehlung':'Bewertung'}</span>${reason}</div>
+      ${alts?`<div class="alts"><div class="alts-label">Alternative ausprobieren</div>${alts}</div>`:''}
+    </div></div>`;
+}
+
+function refreshMeter(){
+  const inp=$('edInput'); if(!inp)return;
+  const rule = state.area==='meta'?RULES.meta:(state.area==='h1'?RULES.h1:RULES.title);
+  $('meterSlot').innerHTML=meterHTML(inp.value.length,rule);
+}
+
+function bindEditor(){
+  const inp=$('edInput'); if(inp){
+    inp.addEventListener('input',()=>{
+      const s=selOf();
+      if(state.area==='title'){s.titleMode='custom';s.titleCustom=inp.value;}
+      else if(state.area==='h1'){s.h1Mode='custom';s.h1Custom=inp.value;}
+      else{s.metaMode='custom';s.metaCustom=inp.value;}
+      // update preview + meter without rebuilding input (keep cursor)
+      document.getElementById('serpSlot').innerHTML = state.area==='h1'?h1PreviewHTML():serpHTML();
+      refreshMeter();
+      // update mode buttons active state
+      document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+    });
+  }
+  document.querySelectorAll('.mode-btn').forEach(b=>b.onclick=()=>{
+    const s=selOf();
+    if(state.area==='title')s.titleMode=b.dataset.mode;
+    else if(state.area==='h1')s.h1Mode=b.dataset.mode;
+    else if(state.area==='h2')s.h2Mode=b.dataset.mode;
+    else if(state.area==='alt')s.altMode=b.dataset.mode;
+    else s.metaMode=b.dataset.mode;
+    render();
+  });
+  document.querySelectorAll('.alt-btn').forEach(b=>b.onclick=()=>{
+    const p=cur(),s=selOf();
+    if(state.area==='h1'){const a=p.h1.alts[+b.dataset.alt];s.h1Mode='custom';s.h1Custom=a.t;}
+    else{const a=p.title.alts[+b.dataset.alt];s.titleMode='custom';s.titleCustom=a.t;}
+    render();
+  });
+}
+
+function techHTML(){
+  const n=k=>TECH.filter(t=>t.status===k).length;
+  const sum=`<div class="tech-sum">
+    <span class="tech-pill ok"><span class="c">${n('ok')}</span> in Ordnung</span>
+    <span class="tech-pill warn"><span class="c">${n('warn')}</span> verbesserbar</span>
+    <span class="tech-pill bad"><span class="c">${n('bad')}</span> kritisch</span>
+  </div>`;
+  const cards=TECH.map(t=>{
+    const myth = t.myth?`<div class="myth">${t.myth}</div>`:'';
+    const rec  = t.rec?`<div class="rec ${t.recCrit?'crit':''}">${t.rec}</div>`:'';
+    let redir='';
+    if(t.redirects){
+      const rows=t.redirects.map(r=>
+        `<div class="redir-row"><span class="old">${r.o}</span><span class="ra">→</span><span class="new">${r.n}</span></div>`).join('');
+      redir=`<div class="redir"><div class="redir-head">Tote URL (geprüft) → empfohlenes 301-Ziel</div>${rows}</div>`;
+    }
+    return `<div class="check ${t.status==='ok'?'':t.status}">
+      <div class="check-top">
+        <span class="check-name">${t.name}</span>
+        <span class="check-status ${t.status==='ok'?'':t.status}">${t.label}</span>
+      </div>
+      <p>${t.body}</p>${redir}${myth}${rec}
+    </div>`;
+  }).join('');
+  return `<div class="serp-label">Technische SEO-Faktoren · geprüft per Live-Abruf der echten Seiten</div>
+    <div class="tech-intro">Diese Punkte betreffen nicht den Text einer einzelnen Seite, sondern die <b>Technik dahinter</b> – ob Google die Seiten gut lesen, einordnen und finden kann. Der Status basiert auf einer direkten Prüfung von Startseite und den drei Produktseiten.</div>
+    ${sum}${cards}`;
+}
+
+function compHTML(){
+  return `<div class="serp-label">Konkurrenzanalyse · SEO-Wettbewerbsumfeld (recherchiert Juni 2026)</div>
+  <div class="tech-intro">Für die wichtigsten Keywords aus der Recherche wurden die Google-Ergebnisse gesichtet und die Firmen notiert, die immer wieder auftauchen. Da Smartrplace <b>drei Themen</b> abdeckt (Einzelraumsteuerung, Heizkostenabrechnung, Mieterstrom), wurde jeder Bereich getrennt betrachtet.</div>
+  <table class="ka-tbl">
+    <thead><tr><th>Anbieter (Beispiele)</th><th>Segment</th><th>Positionierung &amp; SEO-Beobachtung</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="ka-firm">SAUTER,<br>Kieback&amp;Peter</td>
+        <td class="ka-seg">Gebäudeautomation / Einzelraumregelung</td>
+        <td>Große, etablierte Anbieter mit eigener Gebäude- und Energiemanagement-Software (z. B. SAUTER Vision Center). Sehr hohe Domain-Autorität, viele technische Inhalte, klarer B2B-Fokus auf Nichtwohngebäude.</td>
+      </tr>
+      <tr>
+        <td class="ka-firm">KUGU, Objektus,<br>ZENNER</td>
+        <td class="ka-seg">Digitale Heizkostenabrechnung / Submetering</td>
+        <td>Spezialisierte Software- und Messdienstleister. Starke Inhalte rund um die Pflicht-Themen <b>HKVO</b> und <b>EED</b> (z. B. § 6a, unterjährige Verbrauchsinfo). Schlanke, conversion-orientierte Seiten.</td>
+      </tr>
+      <tr>
+        <td class="ka-firm">Techem, ista,<br>Brunata-Minol</td>
+        <td class="ka-seg">Heizkostenabrechnung (Marktführer)</td>
+        <td>Klassische Messdienst-Marktführer mit sehr großer Reichweite und Themenhoheit. Techem deckt zusätzlich Mieterstrom ab. Schwer direkt zu schlagen – besser über Nischen umgehen.</td>
+      </tr>
+      <tr>
+        <td class="ka-firm">metergrid, Solarize,<br>smartRED</td>
+        <td class="ka-seg">Mieterstrom-Abrechnung</td>
+        <td>Fokussierte Mieterstrom-Spezialisten mit klar auf ein Thema zugeschnittenen Seiten und Referenz-/Ratgeber-Inhalten. Ranken gut für „Mieterstrom abrechnen/Software“.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="two-col">
+    <div class="pt-card">
+      <h4>Was Mitbewerber besser machen</h4>
+      <ul>
+        <li><b>Ein Thema pro Seite.</b> Jede Seite ist auf genau ein Keyword ausgerichtet – Smartrplace hatte auf allen drei Produktseiten austauschbare Überschriften (siehe Bereich H2-Struktur).</li>
+        <li><b>Ratgeber zu Pflicht-Themen.</b> HKVO, EED, GEG § 63, Solarpaket – die Spezialisten erklären diese Pflichten und ranken so für informative Suchen. Smartrplace hat dazu kaum eigenen Content.</li>
+        <li><b>Domain-Autorität.</b> Techem, ista und SAUTER sind seit Jahren etabliert und stehen bei breiten Begriffen fast immer vorn.</li>
+      </ul>
+    </div>
+    <div class="pt-card win">
+      <h4>Wo Smartrplace eine Chance hat</h4>
+      <ul>
+        <li><b>Alles aus einer Hand.</b> Kaum ein Wettbewerber deckt Raumsteuerung, Heizkostenabrechnung und Mieterstrom gemeinsam in <b>einem</b> System ab – ein echtes Alleinstellungsmerkmal, das klarer kommuniziert werden sollte.</li>
+        <li><b>Long-Tail-Quick-Wins.</b> „Heizung nach Raumbelegung steuern“, „EED-konforme Abrechnung“ oder „GEG § 63“ sind konkret, kaufnah und kaum umkämpft – die Großen ignorieren sie.</li>
+        <li><b>Content-Lücke schnell schließen.</b> Schon wenige gute Ratgeber-Artikel (siehe Bereich Blog-Entwurf) bringen hier zügig Sichtbarkeit.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="reason"><span class="rl">Empfehlung</span>Nicht frontal gegen Techem oder SAUTER antreten, sondern die <strong>Integration der drei Lösungen</strong> betonen und gezielt die spezifischen, weniger umkämpften Keywords besetzen. Dort ist die Konkurrenz schwach und die Kaufabsicht hoch.</div>`;
+}
+
+function gscHTML(){
+  const zero={
+    'Einzelraumsteuerung':['Einzelraumsteuerung','Einzelraumregelung','Einzelraumregelung Nichtwohngebäude','Heizung nach Raumbelegung steuern','intelligente Raumregelung Energie sparen','GEG § 63 Einzelraumregelung','Heizkosten senken Büro','Raumautomation'],
+    'Heizkostenabrechnung':['digitale Heizkostenabrechnung','digitale Heizkostenabrechnung Gewerbe','Heizkostenabrechnung Software','Submetering','EED-konforme Abrechnung','unterjährige Verbrauchsinformation','Heizkostenverordnung digital'],
+    'Mieterstrom':['Mieterstrom abrechnen','Mieterstrom Software','Mieterstrom Mehrfamilienhaus','PV Eigenverbrauch optimieren','Solarstrom Eigenverbrauch Gewerbe'],
+    'Übergreifend / Startseite':['intelligente Gebäudesteuerung','Smart Building Lösungen','Gebäudeautomation Software','Energiemanagement Gebäude','Energiemanagement'],
+    'Produktname':['SmartrHeating']
+  };
+  let zeroBlocks='';
+  for(const cat in zero){
+    zeroBlocks+=`<div class="zero-cat">${cat}</div><div class="zero-list">`+
+      zero[cat].map(t=>`<span class="zero-chip">${t} <b>0</b></span>`).join('')+`</div>`;
+  }
+  return `<div class="serp-label">Google Search Console · Auswertung (echte Daten · geprüft 26.06.2026 · Zeitraum 3 Monate)</div>
+  <div class="gsc-key"><strong>Kernergebnis:</strong> Von 27 geprüften Suchanfragen liefert <strong>nur der Markenname „smartrplace“</strong> Treffer. Alle 26 Fachbegriffe – über Einzelraumsteuerung, Heizkostenabrechnung und Mieterstrom hinweg – haben <strong>0 Impressionen</strong>. Die gesamte Such-Sichtbarkeit hängt also am Markennamen; für die eigentlichen Themen taucht die Website in Google praktisch nicht auf.</div>
+  <div class="gsc-stat">
+    <div class="s"><div class="n">90</div><div class="l">Klicks (Marke, 3 Mon.)</div></div>
+    <div class="s"><div class="n">163</div><div class="l">Impressionen (Marke)</div></div>
+    <div class="s"><div class="n">55,2 %</div><div class="l">CTR (Marke)</div></div>
+    <div class="s"><div class="n">1,2</div><div class="l">Ø Position (Marke)</div></div>
+  </div>
+  <div class="sec-h">Top-Suchanfragen — was tatsächlich rankt</div>
+  <table class="gsc-tbl"><thead><tr><th>Suchanfrage</th><th>Klicks</th><th>Impress.</th><th>CTR</th><th>Ø Position</th></tr></thead>
+  <tbody>
+    <tr><td><b style="color:var(--green-dark)">smartrplace</b> (Marke)</td><td>90</td><td>163</td><td>55,2 %</td><td>1,2</td></tr>
+    <tr><td colspan="5" style="color:var(--ink-muted);font-style:italic;background:var(--bg)">Keine weiteren Suchanfragen mit Impressionen – alle geprüften Fachbegriffe: 0</td></tr>
+  </tbody></table>
+  <div class="sec-h">Geprüfte Fachbegriffe — alle mit 0 Impressionen</div>
+  <div class="tech-intro" style="margin-bottom:6px">Diese 26 Begriffe (aus Keyword-Tabelle + Aufgabe) wurden einzeln im Bericht „Leistung → Suchanfragen“ geprüft. Keiner davon wird von Google für smartrplace.com angezeigt:</div>
+  ${zeroBlocks}
+  <div class="reason" style="margin-top:16px"><span class="rl">Was das bedeutet</span>Es geht hier <strong>nicht</strong> um „Klickrate verbessern“ oder „von Position 12 auf 8“ – beides setzt Impressionen voraus, die es für die Fachbegriffe nicht gibt. Der Hebel liegt eine Stufe davor: <strong>überhaupt erst sichtbar werden.</strong> Damit werden zwei Ergebnisse des Praktikums zur Priorität: die fehlenden <strong>301-Weiterleitungen</strong> (Technik-Check) und <strong>neuer Content</strong> (Blog/Ratgeber + klare Titles &amp; H1).</div>
+  <div class="sec-h">Hypothesen — Ergebnis</div>
+  <div class="hyp"><span class="tag">H1 · CTR-Hebel</span><span class="v v-no">trifft (noch) nicht zu</span><p>Eine Klickrate lässt sich erst verbessern, wenn es Impressionen gibt. Für alle Fachbegriffe sind es 0 – es gibt also (außer der Marke) keine CTR zu optimieren.</p></div>
+  <div class="hyp"><span class="tag">H2 · Keyword-Lücke</span><span class="v v-yes">bestätigt</span><p>Außer dem Markennamen rankt kein einziger Fachbegriff. Sichtbarkeit muss über Inhalte erst aufgebaut werden – genau die Begründung für Quick-Win-Keywords und den Blog-Artikel.</p></div>
+  <div class="hyp"><span class="tag">H3 · Position 8–20</span><span class="v v-no">trifft nicht zu</span><p>Es gibt keine Fachbegriffe auf Position 8–20 – die Seiten sind für diese Suchen gar nicht im Rennen. „Knapp-vor-Seite-1“-Optimierung greift hier nicht.</p></div>
+  <div class="sec-h">Optional noch auswertbar — Top-Seiten</div>
+  <div class="tech-intro" style="margin-bottom:6px">Die Begriffe wurden auf <b>Suchanfragen</b>-Ebene geprüft. Der Tab „Seiten“ (welche URL die wenigen Marken-Klicks bekommt) ist noch offen – fürs Kernergebnis aber nicht nötig.</div>
+  <table class="gsc-tbl"><thead><tr><th>Seite</th><th>Klicks</th><th>Impress.</th><th>CTR</th><th>Ø Position</th></tr></thead>
+  <tbody><tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr><tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr><tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr></tbody></table>
+  <div class="gsc-fill">↑ optional mit „Seiten“-Daten ausfüllen</div>`;
+}
+
+function blogHTML(){
+  return `<div class="serp-label">Vorschau · so erschiene der Artikel in der Google-Suche</div>
+  <div class="serp">
+    <div class="serp-url-row"><div class="serp-favi"><span></span></div>
+      <div><div class="serp-site">Smartrplace</div><div class="u">smartrplace.com › ratgeber › intelligente-raumregelung</div></div></div>
+    <div class="serp-title">Wie intelligente Raumregelung Energie spart | Smartrplace</div>
+    <div class="serp-desc">Heizung nach Raumbelegung steuern statt nach starrem Zeitplan: So spart intelligente Raumregelung Energie – einfach erklärt. Jetzt mehr erfahren.</div>
+  </div>
+  <div class="blog-brief">
+    <span class="bl">Redaktioneller Steckbrief</span><br>
+    <b>Ziel-Keyword:</b> intelligente Raumregelung / Heizung nach Raumbelegung steuern (Quick Win, Difficulty 20–25)<br>
+    <b>Neben-Keywords:</b> Einzelraumsteuerung, Energie sparen, GEG § 63, Einzelraumregelung<br>
+    <b>Meta-Title:</b> Wie intelligente Raumregelung Energie spart | Smartrplace<br>
+    <b>Länge:</b> ca. 520 Wörter · einfache Sprache, auch für Nicht-Experten
+  </div>
+  <article class="blog-art">
+    <h1>Wie intelligente Raumregelung Energie spart</h1>
+    <h2>Geheizt wird oft nach der Uhr – nicht nach dem Bedarf</h2>
+    <p>In vielen Büro- und Gewerbegebäuden läuft die Heizung nach einem festen Zeitplan: morgens an, abends aus. Das klingt praktisch, hat aber einen Haken. Räume werden beheizt, obwohl niemand darin ist – der leere Besprechungsraum am Nachmittag, das Eckbüro während des Außentermins, das ganze Stockwerk am Brückentag. Diese Wärme kostet Geld, ohne irgendjemandem zu nutzen. Genau hier setzt eine intelligente Raumregelung an.</p>
+    <h2>Die Lösung: Heizung nach Raumbelegung steuern</h2>
+    <p>Eine intelligente Einzelraumsteuerung misst für jeden Raum einzeln, ob und wie er genutzt wird – zum Beispiel über Sensoren für Temperatur, Belegung oder CO₂-Gehalt der Luft. Auf dieser Grundlage entscheidet das System automatisch, wann geheizt wird. Ist ein Raum leer, wird die Temperatur abgesenkt. Wird er wieder genutzt, heizt das System rechtzeitig vor. Statt das ganze Gebäude pauschal nach Uhrzeit zu heizen, lässt sich so die Heizung nach Raumbelegung steuern – punktgenau und ohne dass jemand manuell nachregeln muss.</p>
+    <h2>Was bringt das konkret?</h2>
+    <ul>
+      <li><b>Weniger Energiekosten:</b> Nicht genutzte Räume werden nicht unnötig beheizt – das senkt den Verbrauch spürbar.</li>
+      <li><b>Mehr Komfort:</b> Genutzte Räume sind verlässlich warm, ohne dass jemand am Thermostat drehen muss.</li>
+      <li><b>Überblick:</b> Die Software zeigt, wo wie viel Energie verbraucht wird – eine gute Basis, um weiter zu optimieren.</li>
+      <li><b>Weniger CO₂:</b> Wer weniger heizt, stößt weniger Treibhausgase aus – gut fürs Klima und für die Bilanz des Gebäudes.</li>
+    </ul>
+    <p>Ein einfaches Beispiel: In einem Bürogebäude wird der große Konferenzraum nur an zwei Tagen pro Woche genutzt. Eine herkömmliche Steuerung hält ihn trotzdem die ganze Woche warm. Die intelligente Raumregelung erkennt dagegen, dass der Raum leer ist, und heizt erst wieder, wenn der nächste Termin ansteht. Über das Jahr summieren sich solche Räume zu einem deutlichen Anteil der Heizkosten – Geld, das ohne Komfortverlust gespart werden kann.</p>
+    <h2>Auch eine Frage der Pflicht</h2>
+    <p>Für viele Nichtwohngebäude ist eine raumweise Regelung nicht nur sinnvoll, sondern wird gesetzlich zunehmend erwartet. Das Gebäudeenergiegesetz (GEG, § 63) verlangt unter bestimmten Voraussetzungen eine Einzelraumregelung. Wer früh auf eine intelligente Lösung setzt, erfüllt diese Anforderungen und spart gleichzeitig Energie – statt später nachrüsten zu müssen.</p>
+    <h2>Fazit</h2>
+    <p>Heizen nach festem Zeitplan verschenkt Energie. Eine intelligente Raumregelung heizt dagegen genau dann, wenn ein Raum wirklich genutzt wird. Das senkt Kosten, erhöht den Komfort und hilft, gesetzliche Vorgaben zu erfüllen. Für die meisten Gebäude lohnt sich der Umstieg schneller, als viele denken.</p>
+    <div class="blog-cta">Möchten Sie wissen, wie viel Energie Ihr Gebäude sparen könnte? Sprechen Sie uns an – wir zeigen Ihnen das Potenzial Ihrer Räume.</div>
+    <div class="wordcount">Entwurf · ~520 Wörter</div>
+  </article>`;
+}
+
+function render(){
+  buildAreas();buildTabs();
+  if(state.area==='tech'){
+    $('main').innerHTML=techHTML();
+    $('foot-next').textContent='Technik-Check · 1 kritischer Punkt: 301-Weiterleitungen einrichten';
+    return;
+  }
+  if(state.area==='konkurrenz'){
+    $('main').innerHTML=compHTML();
+    $('foot-next').textContent='Konkurrenzanalyse · Chance: Integration der 3 Lösungen + unbesetzte Quick-Win-Keywords';
+    return;
+  }
+  if(state.area==='gsc'){
+    $('main').innerHTML=gscHTML();
+    $('foot-next').textContent='Search Console · Ergebnis: nur die Marke rankt – alle 26 Fachbegriffe 0 Impressionen';
+    return;
+  }
+  if(state.area==='blog'){
+    $('main').innerHTML=blogHTML();
+    $('foot-next').textContent='Blog-Entwurf · Ziel-Keyword „intelligente Raumregelung“ (Quick Win)';
+    return;
+  }
+  if(state.area==='alt'){
+    if(state.page!=='home') state.page='home'; // Alt-Text-Schwächen liegen auf der Startseite
+    buildTabs(); // Tabs neu zeichnen mit aktiver Startseite
+    $('main').innerHTML=altHTML();
+    bindEditor();
+    $('foot-next').textContent='Alt-Text = Bildbeschreibung für Google und Screenreader · leere Attribute sofort beheben';
+    return;
+  }
+  const preview = state.area==='h1' ? h1PreviewHTML()
+                : state.area==='h2' ? h2OutlineHTML()
+                : serpHTML();
+  $('main').innerHTML=`<div id="serpSlot">${preview}</div>${editorHTML()}`;
+  bindEditor();
+  const foot = {
+    title:'Nächster Bereich: Meta-Descriptions, H1, H2 & Technik',
+    meta:'Tipp: Metas sind bereits gut – frei zum Experimentieren',
+    h1:'H1 = sichtbare Seitenüberschrift · bewusst leicht anders als der Title',
+    h2:'H2 = Zwischenüberschriften · eindeutig, keyword-tragend, keine Doppelungen'
+  };
+  $('foot-next').textContent = foot[state.area] || '';
+}
+render();
+</script>
+</body>
+</html>
